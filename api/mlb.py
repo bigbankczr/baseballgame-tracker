@@ -2,6 +2,13 @@ import requests
 from datetime import datetime
 baseURL = "https://statsapi.mlb.com/api/v1"
 
+def findGames(teamID, date):
+    data = getSchedule(team_id, date, date)
+    dates = data.get("dates", [])
+    if not dates:
+        return []
+    return dates[0]["games"]
+
 def getGame(game_pk):
     url = f"{baseURL}/schedule?sportId=1&gamePks={game_pk}"
     response = requests.get(url)
@@ -269,3 +276,18 @@ def parseGameLogPitching(splits, player_id, player_name):
         })
     return rows
 
+def parseGamesSeen(game, attendance_type, game_notes=None, milestone=None):
+    return {"game_pk": game["gamePk"],
+            "official_date": game["officialDate"],
+            "season": int(game["season"]),
+            "game_type": game["gameType"],
+            "home_team": game["teams"]["home"]["team"]["name"],
+            "away_team": game["teams"]["away"]["team"]["name"],
+            "home_score":game["teams"]["home"].get("score"),
+            "away_score":game["teams"]["away"].get("score"),
+            "venue_name": game["venue"]["name"],
+            "day_night": game["dayNight"],
+            "game_number": game["gameNumber"],
+            "attendance_type": attendance_type,
+            "game_notes": game_notes,
+            "milestone": milestone}

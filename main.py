@@ -1,6 +1,8 @@
-from api.mlb import getSchedule, getBoxscore, parseBatting, parsePitching, parseFielding, getPlayerGameLog, parseGameLogBatting, getGame, parseGameLogPitching
+import sqlite3
+
+from api.mlb import getSchedule, getBoxscore, parseBatting, parsePitching, parseFielding, getPlayerGameLog, parseGameLogBatting, getGame, parseGameLogPitching, parseGamesSeen
 from database.db import insertRows, hasGamelog
-from database.tables import createTables
+from database.tables import createTables, sqlite3
 
 def loadGame(game_pk):
     gameData = getGame(game_pk)
@@ -40,6 +42,19 @@ def loadGame(game_pk):
 
     return game
 
+def logGame(user_id, game_pk, attendance_type, game_notes=None, milestone=None):
+    game = getGame(game_pk)
+    row = parseGamesSeen(game, attendance_type, game_notes, milestone)
+    row["user_id"] = user_id
+    return insertRows("games_seen", [row])
+
+
 if __name__ == "__main__":
     createTables()
-    print(loadGame(746170))
+
+    conn = sqlite3.connect("database/baseball.db")
+    conn.execute("INSERT OR IGNORE INTO users (username) VALUES (?)", ("cesar",))
+    conn.commit()
+    conn.close()
+
+    logGame(1, 746170, "in_person")

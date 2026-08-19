@@ -35,7 +35,6 @@ def createTables():
         season INTEGER,
         player_name TEXT,
         team TEXT,
-        batting_order INTEGER,
         at_bats INTEGER,
         plate_appearances INTEGER,
         runs INTEGER,

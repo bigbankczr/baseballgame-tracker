@@ -19,3 +19,14 @@ def insertRows(table, rows):
     connection.close()
     return len(rows)
 
+def hasGamelog(table, player_id, season):
+    connection = connect()
+    cursor = connection.cursor()
+    cursor.execute(
+        f"SELECT 1 FROM {table} WHERE player_id = ? AND season = ? LIMIT 1",
+        (player_id, season),
+    )
+    found = cursor.fetchone() is not None
+    connection.close()
+    return found
+

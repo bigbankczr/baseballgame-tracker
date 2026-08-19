@@ -5,15 +5,15 @@ baseURL = "https://statsapi.mlb.com/api/v1"
 def getGame(game_pk):
     url = f"{baseURL}/schedule?sportId=1&gamePks={game_pk}"
     response = requests.get(url)
-    data=response.json()
-    return data
+    data= response.json()
+    return data["dates"][0]["games"][0]
 
 
 def getSchedule(teamID, startDate, endDate):
     url = f"{baseURL}/schedule?sportId=1&teamId={teamID}&startDate={startDate}&endDate={endDate}"
     response = requests.get(url)
     data = response.json()
-    return data["dates"][0]["games"][0]
+    return data
 
 def getBoxscore(game_pk):
     url = f"{baseURL}/game/{game_pk}/boxscore"
@@ -158,7 +158,6 @@ def parseBatting(boxscore, game_pk, official_date):
                 "air_outs": batting.get("airOuts", 0),
                 "pop_outs": batting.get("popOuts", 0),
                 "line_outs": batting.get("lineOuts", 0),
-                "batting_order": int(player.get("battingOrder", 0)),
                 "season": int(official_date[:4]),
             })
     return rows
